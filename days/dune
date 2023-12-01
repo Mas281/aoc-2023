@@ -1,0 +1,7 @@
+(executable
+  (name day01)
+  (public_name day01)
+  (libraries adventofcode)
+  (preprocess (pps ppx_jane))
+  (modules day01))
+
