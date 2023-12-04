@@ -19,3 +19,10 @@
   (preprocess (pps ppx_jane))
   (modules day03))
 
+(executable
+  (name day04)
+  (public_name day04)
+  (libraries adventofcode)
+  (preprocess (pps ppx_jane))
+  (modules day04))
+
