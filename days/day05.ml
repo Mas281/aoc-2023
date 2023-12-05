@@ -5,10 +5,10 @@ open! Adventofcode.Utils
 let parse_maps =
   let open Adventofcode.Parser.Let_syntax in
   let range =
-    let%map dest_start = int <* whitespace
-    and src_start = int <* whitespace
+    let%map dest = int <* whitespace
+    and src = int <* whitespace
     and length = int <* whitespace in
-    src_start, dest_start, length
+    src, dest, length
   in
   let map = consume upto_newline *> some range in
   let%map seeds = consume (string "seeds: ") *> some (int <* whitespace)
@@ -16,43 +16,43 @@ let parse_maps =
   seeds, maps
 ;;
 
-let value_from_range source map =
-  List.find_map map ~f:(fun (src_start, dest_start, length) ->
-    match source >= src_start && source < src_start + length with
-    | true -> Some (dest_start + source - src_start)
+let range_map input map =
+  List.find_map map ~f:(fun (src, dest, length) ->
+    match input >= src && input < src + length with
+    | true -> Some (dest + input - src)
     | false -> None)
-  |> Option.value ~default:source
+  |> Option.value ~default:input
 ;;
 
-let location seed = List.fold ~init:seed ~f:value_from_range
+let apply_range_maps ~init = List.fold ~init ~f:range_map
 
 let part_1 seeds maps =
-  List.map seeds ~f:(fun seed -> location seed maps)
+  List.map seeds ~f:(fun seed -> apply_range_maps ~init:seed maps)
   |> List.min_elt ~compare:Int.compare
   |> Option.value_exn
 ;;
 
-let min_location (start, length) maps =
-  let rec f seed min =
-    match seed < start + length with
-    | true ->
-      let new_min = Int.min min (location seed maps) in
-      f (seed + 1) new_min
-    | false -> min
-  in
-  f start Int.max_value
-;;
-
 let part_2 seeds maps =
-  let pairs =
+  let seed_ranges =
     List.chunks_of seeds ~length:2
     |> List.map ~f:(function
       | [ a; b ] -> a, b
       | _ -> failwith "odd length")
   in
-  List.map pairs ~f:(fun range -> min_location range maps)
-  |> List.min_elt ~compare:Int.compare
-  |> Option.value_exn
+  let inverse_maps =
+    List.map maps ~f:(List.map ~f:(fun (src, dest, length) -> dest, src, length))
+    |> List.rev
+  in
+  let rec find_lowest_seed location =
+    let seed = apply_range_maps ~init:location inverse_maps in
+    match
+      List.exists seed_ranges ~f:(fun (start, length) ->
+        seed >= start && seed < start + length)
+    with
+    | true -> location
+    | false -> find_lowest_seed (location + 1)
+  in
+  find_lowest_seed 0
 ;;
 
 let () =
