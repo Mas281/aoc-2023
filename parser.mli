@@ -25,8 +25,9 @@ val consume_char : char -> unit t
 val consume_line : unit t
 val line : 'a t -> 'a t
 val whitespace : unit t
-val until_whitespace : string t
-val upto_newline : string t
+val to_whitespace : string t
+val to_eol : string t
+val to_char : char -> string t
 val int : int t
 val any : 'a t -> 'a list t
 val some : 'a t -> 'a list t

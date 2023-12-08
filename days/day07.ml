@@ -5,7 +5,7 @@ open! Adventofcode.Utils
 let parse_hands =
   let open Adventofcode.Parser.Let_syntax in
   let hand =
-    let%map cards = until_whitespace
+    let%map cards = to_whitespace
     and bid = int <* whitespace in
     cards, bid
   in

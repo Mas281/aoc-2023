@@ -50,7 +50,7 @@ let part_2 strings =
 
 let () =
   let input = read_input ~day:1 in
-  let strings = run_exn (some until_whitespace) input in
+  let strings = run_exn (some to_eol) input in
   part_1 strings |> Int.to_string |> print_endline;
   part_2 strings |> Int.to_string |> print_endline
 ;;

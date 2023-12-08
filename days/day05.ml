@@ -10,7 +10,7 @@ let parse_maps =
     and length = int <* whitespace in
     src, dest, length
   in
-  let map = consume upto_newline *> some range in
+  let map = consume to_eol *> some range in
   let%map seeds = consume (string "seeds: ") *> some (int <* whitespace)
   and maps = some map in
   seeds, maps

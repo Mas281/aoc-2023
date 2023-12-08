@@ -78,8 +78,9 @@ let consume_char c = consume (char c)
 let consume_line = consume (char '\n')
 let line t = t <* consume_line
 let whitespace = consume (predicate ~f:Char.is_whitespace)
-let until_whitespace = predicate ~f:(Fn.non Char.is_whitespace) <* whitespace
-let upto_newline = line (predicate ~f:(Fn.non (Char.equal '\n')))
+let to_whitespace = predicate ~f:(Fn.non Char.is_whitespace) <* whitespace
+let to_eol = line (predicate ~f:(Fn.non (Char.equal '\n')))
+let to_char c = predicate ~f:(fun d -> not (Char.equal c d)) <* consume_char c
 
 let int input =
   let positive_int =

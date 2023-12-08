@@ -47,3 +47,10 @@
   (preprocess (pps ppx_jane))
   (modules day07))
 
+(executable
+  (name day08)
+  (public_name day08)
+  (libraries adventofcode)
+  (preprocess (pps ppx_jane))
+  (modules day08))
+
