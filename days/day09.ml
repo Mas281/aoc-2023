@@ -11,7 +11,7 @@ let rec next_value sequence =
     let last = List.last_exn sequence in
     let differences =
       let except_last = List.take sequence (List.length sequence - 1) in
-      List.zip_exn except_last (List.tl_exn sequence) |> List.map ~f:(fun (a, b) -> b - a)
+      List.map2_exn ~f:( - ) (List.tl_exn sequence) except_last
     in
     last + next_value differences
 ;;

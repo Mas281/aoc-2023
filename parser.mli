@@ -1,6 +1,6 @@
 open! Core
 
-type 'a t
+type 'a t = char list -> (char list * 'a) Or_error.t
 
 include Applicative.S with type 'a t := 'a t
 
