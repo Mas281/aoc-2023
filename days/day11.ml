@@ -20,21 +20,32 @@ let find_expansions grid =
       match List.for_all l ~f:(Char.equal '.') with
       | true -> Some row
       | false -> None)
+    |> List.sort ~compare:Int.compare
+    |> List.to_array
   in
-  let row_expansions = expansions grid |> Hash_set.of_list (module Int) in
-  let col_expansions =
-    expansions (List.transpose_exn grid) |> Hash_set.of_list (module Int)
-  in
+  let row_expansions = expansions grid in
+  let col_expansions = expansions (List.transpose_exn grid) in
   row_expansions, col_expansions
+;;
+
+let count_expansions_in_interval expansions low high =
+  let open Option.Let_syntax in
+  (let%bind first_expansion =
+     Array.binary_search expansions `First_strictly_greater_than low ~compare:Int.compare
+   in
+   let%map last_expansion =
+     Array.binary_search expansions `Last_strictly_less_than high ~compare:Int.compare
+   in
+   last_expansion - first_expansion + 1)
+  |> Option.value ~default:0
 ;;
 
 let distance (row1, col1) (row2, col2) (row_expansions, col_expansions) ~expansion_factor =
   let axis_distance p1 p2 expansions =
     let p1, p2 = Int.min p1 p2, Int.max p1 p2 in
-    let range = Sequence.range p1 p2 in
-    let expanded_count = Sequence.count range ~f:(Hash_set.mem expansions) in
-    let not_expanded_count = p2 - p1 - expanded_count in
-    (expanded_count * expansion_factor) + not_expanded_count
+    let num_expanded = count_expansions_in_interval expansions p1 p2 in
+    let num_non_expanded = p2 - p1 - num_expanded in
+    (expansion_factor * num_expanded) + num_non_expanded
   in
   let row_distance = axis_distance row1 row2 row_expansions in
   let col_distance = axis_distance col1 col2 col_expansions in
@@ -44,12 +55,12 @@ let distance (row1, col1) (row2, col2) (row_expansions, col_expansions) ~expansi
 let sum_of_distances galaxies expansions ~expansion_factor =
   let rec f = function
     | [] -> 0
-    | p1 :: tl ->
-      let distances_from_p1 =
-        List.fold tl ~init:0 ~f:(fun acc p2 ->
-          acc + distance p1 p2 expansions ~expansion_factor)
+    | galaxy :: tl ->
+      let total_distance_from_galaxy =
+        List.fold tl ~init:0 ~f:(fun acc other ->
+          acc + distance galaxy other expansions ~expansion_factor)
       in
-      distances_from_p1 + f tl
+      total_distance_from_galaxy + f tl
   in
   f galaxies
 ;;
