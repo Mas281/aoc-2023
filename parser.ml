@@ -70,7 +70,9 @@ let string string =
 
 let predicate ~f input =
   let parsed, rest = List.split_while ~f input in
-  Ok (rest, String.of_char_list parsed)
+  match parsed with
+  | [] -> Or_error.error_string "no chars matching predicate"
+  | _ -> Ok (rest, String.of_char_list parsed)
 ;;
 
 let consume t = t >>| Fn.const ()
