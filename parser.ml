@@ -51,12 +51,12 @@ let tag_error t ~tag input = t input |> Or_error.tag ~tag
 
 let char char = function
   | c :: rest when Char.equal char c -> Ok (rest, c)
-  | c ->
+  | chars ->
     Or_error.error_string
       ("expected next char to be '"
        ^ String.of_char char
        ^ "', got \""
-       ^ String.of_char_list c
+       ^ String.of_char_list chars
        ^ "\"")
 ;;
 
