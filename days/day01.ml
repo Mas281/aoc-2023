@@ -4,7 +4,7 @@ open! Adventofcode.Utils
 
 let part_1 strings =
   List.map ~f:(String.filter ~f:Char.is_digit) strings
-  |> List.map ~f:(fun s -> String.make 1 s.[0] ^ String.make 1 s.[String.length s - 1])
+  |> List.map ~f:(fun s -> String.of_char s.[0] ^ String.of_char s.[String.length s - 1])
   |> List.map ~f:Int.of_string
   |> List.reduce_exn ~f:( + )
 ;;
@@ -28,7 +28,7 @@ let digits_in_string s =
     match chars with
     | [] -> []
     | c :: rest when Char.is_digit c ->
-      let digit = String.make 1 c |> Int.of_string in
+      let digit = String.of_char c |> Int.of_string in
       digit :: f rest
     | _ :: rest ->
       (match

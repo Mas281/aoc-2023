@@ -20,11 +20,7 @@ let parse_games =
   some (line game)
 ;;
 
-let find_or_default table key =
-  match Hashtbl.find table key with
-  | Some x -> x
-  | None -> 0
-;;
+let find_or_default table key = Hashtbl.find table key |> Option.value ~default:0
 
 let possible (_, sets) ~red ~blue ~green =
   List.for_all sets ~f:(fun set ->
