@@ -6,7 +6,7 @@ let parse_grid =
   let open Adventofcode.Parser.Let_syntax in
   let row =
     let%map chars = String.to_array <$> to_eol in
-    Array.map chars ~f:(Fn.compose Int.of_string String.of_char)
+    Array.map chars ~f:Char.get_digit_exn
   in
   Array.of_list <$> some row
 ;;
@@ -128,10 +128,10 @@ let dijkstra grid ~min_straight ~max_straight =
   let min_cost = Hashtbl.create (module State) in
   let bottom_right = Array.length grid - 1, Array.length grid.(0) - 1 in
   let rec bfs queue =
-    let ({ cost; state = { position; _ } } as elem : Queue_element.t) =
+    let ({ cost; state = { position; consecutive; _ } } as elem : Queue_element.t) =
       Set.min_elt_exn queue
     in
-    match Position.equal position bottom_right with
+    match Position.equal position bottom_right && consecutive >= min_straight with
     | true -> cost
     | _ ->
       let queue' = update_queue grid queue min_cost elem ~min_straight ~max_straight in

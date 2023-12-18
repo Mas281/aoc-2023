@@ -26,7 +26,7 @@ let part_1 input line_length =
   String.foldi input ~init:(0, false, 0) ~f:(fun idx (acc, adjacent, sum) ->
     function
     | c when Char.is_digit c ->
-      let digit = Char.to_string c |> Int.of_string in
+      let digit = Char.get_digit_exn c in
       (10 * acc) + digit, adjacent || symbol_adjacent idx, sum
     | _ -> 0, false, if adjacent then sum + acc else sum)
   |> trd3

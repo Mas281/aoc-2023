@@ -117,3 +117,10 @@
   (preprocess (pps ppx_jane))
   (modules day17))
 
+(executable
+  (name day18)
+  (public_name day18)
+  (libraries adventofcode)
+  (preprocess (pps ppx_jane))
+  (modules day18))
+
