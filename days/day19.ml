@@ -10,8 +10,7 @@ module Category = struct
     | S
   [@@deriving equal, sexp_of]
 
-  let parse input =
-    match input with
+  let parse = function
     | 'x' :: rest -> Ok (rest, X)
     | 'm' :: rest -> Ok (rest, M)
     | 'a' :: rest -> Ok (rest, A)
