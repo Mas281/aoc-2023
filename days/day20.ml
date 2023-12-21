@@ -146,8 +146,8 @@ let part_2 modules =
   let sends_high watching =
     (* Presses the button once and returns whether [watching] sent a high pulse to
        [sender_to_rx] at any point *)
-    press_button modules ~init:false ~f:(fun current sender pulse receivers ->
-      current
+    press_button modules ~init:false ~f:(fun already_sent sender pulse receivers ->
+      already_sent
       || (String.equal sender watching
           && Pulse.equal pulse Pulse.High
           && List.mem receivers sender_to_rx ~equal:String.equal))
